@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 from utils.mutation_parser import parse_mutation
 from utils.crispr_tool import generate_repair_plan
 from utils.clinical_trials import get_trials
+from gene_data import GENE_DATA
 from flask_cors import CORS
 app = Flask(__name__)
 
@@ -27,6 +28,9 @@ def process_mutation():
         'mut_type': parsed_mut_type,
         'mutation_details': parsed_mutation
     }
+    
+    wild_url = GENE_DATA['Gene'][gene]['wild']
+    mutated_url = GENE_DATA['Gene'][gene][mutation]['Missense']
 
     # CRISPR repair plan and clinical trials
     repair_plan = generate_repair_plan(gene, mutation)
@@ -38,7 +42,10 @@ def process_mutation():
         'mut_type': parsed_mut_type,
         'repair': repair_plan,
         'trials': trials,
-        'mutation_info': mutation_info
+        'mutation_info': mutation_info,
+        'wild-url': wild_url,
+        'mutated_url': mutated_url
+        
     })
 
 if __name__ == '__main__':
