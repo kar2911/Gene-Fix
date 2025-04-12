@@ -1,18 +1,41 @@
 // Result.jsx
+import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import DualProteinViewer from '../components/DualProteinViewer ';
 
 const Result = () => {
-    const { state } = useLocation();
+    const { state } = useLocation(); // state contains the mutation-related inputs from the previous step
+    const [resultData, setResultData] = useState(null);
     const navigate = useNavigate();
 
-    if (!state) {
-        return <div className="p-6">No data available. <button className="bg-blue-500 text-white px-4 py-2 rounded" onClick={() => navigate('/')}>Go Back</button></div>;
+    useEffect(() => {
+        if (!state) return;
+
+        const fetchResults = async () => {
+            const response = await fetch('http://localhost:5000/gene-fix', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(state),
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                setResultData(data);
+            } else {
+                console.error('Error fetching data');
+            }
+        };
+
+        fetchResults();
+    }, [state]);
+
+    if (!resultData) {
+        return <div className="p-6">Loading results...</div>;
     }
 
-    const { gene, mutation, mut_type, repair, trials, wild_url, mutated_url } = state;
-    
-    // Use hard-coded URLs if not provided in state
+    const { gene, mutation, mut_type, repair, trials, wild_url, mutated_url } = resultData;
     const wildTypeUrl = wild_url || "http://localhost:5000/static/TP53/TP53_wild.pdb";
     const mutantUrl = mutated_url || "http://localhost:5000/static/TP53/p.R175H/TP53_pr175h_missense.pdb";
 
@@ -20,10 +43,10 @@ const Result = () => {
         <div className="p-6 max-w-6xl mx-auto">
             <h2 className="text-2xl font-bold mb-2">Mutation Report: {gene} – {mutation}</h2>
             <h3 className="text-lg font-semibold mb-4">Mutation Type: {mut_type}</h3>
-            
+
             <div className="bg-white rounded-lg shadow-md p-6 mb-6">
                 <h4 className="text-xl font-bold mb-4">Protein Structure Comparison</h4>
-                <DualProteinViewer 
+                <DualProteinViewer
                     wildTypePdbUrl={wildTypeUrl}
                     mutantPdbUrl={mutantUrl}
                     wildTypeLabel={`${gene} Wild Type`}
@@ -57,10 +80,10 @@ const Result = () => {
                     )}
                 </div>
             </div>
-            
+
             <div className="mt-6 text-center">
-                <button 
-                    onClick={() => navigate('/gene-fix')} 
+                <button
+                    onClick={() => navigate('/gene-fix')}
                     className="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg transition shadow"
                 >
                     Try Another Mutation
