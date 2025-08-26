@@ -1,21 +1,4 @@
 def generate_repair_plan(gene, mutation, enzyme=None, pam=None, gRNA=None, strategy=None, ssODN=None, validation=None):
-    """
-    Generates a biologically consistent and detailed CRISPR repair plan
-    for the specified gene and mutation.
-
-    Args:
-    gene (str): The name of the gene (e.g., 'TP53', 'KRAS').
-    mutation (str): The mutation in HGVS protein format (e.g., 'p.R175H').
-    enzyme (str): The CRISPR enzyme to use (e.g., 'SpCas9', 'SaCas9'). Default is None.
-    pam (str): The PAM sequence (e.g., 'NGG'). Default is None.
-    gRNA (str): The gRNA sequence. Default is None.
-    strategy (str): The strategy for editing (e.g., 'HDR', 'Prime Editing'). Default is None.
-    ssODN (str): The ssODN (single-strand oligo DNA) or pegRNA sequence. Default is None.
-    validation (str): Validation steps (e.g., 'Sequence the edited locus'). Default is None.
-
-    Returns:
-    str: A detailed CRISPR repair plan.
-    """
 
     # Predefined CRISPR design per gene
     gene_data = {

@@ -1,5 +1,6 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
+import MarkdownRenderer from '../components/MarkdownRenderer';
 
 const SimulateResult = () => {
     const { state } = useLocation();
@@ -14,10 +15,11 @@ const SimulateResult = () => {
 
         const fetchSimulation = async () => {
             try {
-                const res = await fetch('http://localhost:5000/gene-fix', {
+                const res = await fetch('http://localhost:8000/gene-fix', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(state),
+                    
                 });
                 const data = await res.json();
                 setResultData(data);
@@ -61,7 +63,7 @@ const SimulateResult = () => {
             </div>
 
             <div>
-                {ai_summary}
+                <MarkdownRenderer content={ai_summary}/>
             </div>
 
 
